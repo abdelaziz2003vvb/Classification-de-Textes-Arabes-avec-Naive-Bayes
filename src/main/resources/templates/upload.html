@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload et Classification</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📄 Upload et Classification</h1>
+        <a th:href="@{/}" class="back-link">← Retour à l'accueil</a>
+    </header>
+
+    <div th:if="${error}" class="alert alert-error">
+        <strong>❌ Erreur:</strong> <span th:text="${error}"></span>
+    </div>
+
+    <div class="card">
+        <h2>📁 Option 1: Upload un fichier .txt</h2>
+        <form method="post" th:action="@{/classify-file}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Sélectionnez un fichier texte arabe:</label>
+                <input type="file" id="file" name="file" accept=".txt" required class="file-input">
+            </div>
+            <div id="file-preview" style="display:none;"></div>
+            <button type="submit" class="btn btn-primary">
+                🚀 Classifier le Fichier
+            </button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>✍️ Option 2: Saisir du texte</h2>
+        <form method="post" th:action="@{/classify-text}">
+            <div class="form-group">
+                <label for="text">Saisissez votre texte arabe:</label>
+                <textarea id="text" name="text" rows="10" required
+                          placeholder="مثال: الاقتصاد المغربي ينمو بشكل مستمر..."
+                          class="text-input" dir="rtl"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                🚀 Classifier le Texte
+            </button>
+        </form>
+    </div>
+
+    <div class="info-box">
+        <h3>ℹ️ Instructions:</h3>
+        <ul>
+            <li>Le fichier doit être au format .txt encodé en UTF-8</li>
+            <li>Le texte doit être en arabe</li>
+            <li>Catégories disponibles: <span th:each="cat, iterStat : ${categories}">
+                    <strong th:text="${cat}"></strong><span th:if="${!iterStat.last}">, </span>
+                </span></li>
+        </ul>
+    </div>
+
+    <footer>
+        <p>© 2025 Classification de Textes Arabes</p>
+    </footer>
+</div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

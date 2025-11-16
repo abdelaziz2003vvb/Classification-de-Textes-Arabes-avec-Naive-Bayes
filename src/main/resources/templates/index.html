@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification de Textes Arabes - Naive Bayes</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🤖 Classification de Textes Arabes</h1>
+        <p>Utilisant Naive Bayes et SAFAR</p>
+    </header>
+
+    <div th:if="${error}" class="alert alert-error">
+        <strong>❌ Erreur:</strong> <span th:text="${error}"></span>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success">
+        <strong>✅ Succès:</strong> <span th:text="${success}"></span>
+    </div>
+
+    <div class="card">
+        <h2>📊 État du Modèle</h2>
+        <div class="status">
+            <span class="status-label">Statut:</span>
+            <span th:if="${trained}" class="badge badge-success">✅ Entraîné</span>
+            <span th:unless="${trained}" class="badge badge-warning">⚠️ Non entraîné</span>
+        </div>
+
+        <div th:if="${stats != null && stats.trained}">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">Documents:</span>
+                    <span class="stat-value" th:text="${stats.totalDocuments}"></span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Vocabulaire:</span>
+                    <span class="stat-value" th:text="${stats.vocabularySize}"></span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Catégories:</span>
+                    <span class="stat-value" th:text="${#lists.size(stats.categories)}"></span>
+                </div>
+            </div>
+
+            <div class="categories">
+                <h3>📁 Catégories disponibles:</h3>
+                <ul>
+                    <li th:each="category : ${stats.categories}">
+                        <strong th:text="${category}"></strong>
+                        <span th:text="'(' + ${stats.categoryDocumentCount.get(category)} + ' documents)'"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🎓 Entraînement du Modèle</h2>
+        <p>Entraînez le modèle sur les données du dossier <code>Data/</code></p>
+
+        <div class="button-group">
+            <form method="post" th:action="@{/train}">
+                <button type="submit" class="btn btn-primary">
+                    🎯 Entraîner le Modèle
+                </button>
+            </form>
+
+            <form method="post" th:action="@{/train-evaluate}">
+                <button type="submit" class="btn btn-secondary">
+                    📊 Entraîner et Évaluer (80/20)
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${metrics != null}" class="card">
+        <h2>📈 Métriques d'Évaluation</h2>
+
+        <div class="metrics-summary">
+            <div class="metric-box">
+                <div class="metric-value" th:text="${#numbers.formatPercent(metrics.accuracy, 1, 2)}"></div>
+                <div class="metric-label">Accuracy</div>
+            </div>
+        </div>
+
+        <table class="metrics-table">
+            <thead>
+            <tr>
+                <th>Catégorie</th>
+                <th>Précision</th>
+                <th>Rappel</th>
+                <th>F1-Score</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="entry : ${metrics.precision}">
+                <td th:text="${entry.key}"></td>
+                <td th:text="${#numbers.formatPercent(entry.value, 1, 2)}"></td>
+                <td th:text="${#numbers.formatPercent(metrics.recall.get(entry.key), 1, 2)}"></td>
+                <td th:text="${#numbers.formatPercent(metrics.f1Score.get(entry.key), 1, 2)}"></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr class="total-row">
+                <td><strong>Moyenne (Macro)</strong></td>
+                <td><strong th:text="${#numbers.formatPercent(metrics.macroAverages.precision, 1, 2)}"></strong></td>
+                <td><strong th:text="${#numbers.formatPercent(metrics.macroAverages.recall, 1, 2)}"></strong></td>
+                <td><strong th:text="${#numbers.formatPercent(metrics.macroAverages.f1Score, 1, 2)}"></strong></td>
+            </tr>
+            </tfoot>
+        </table>
+
+        <div class="info-box">
+            <p>📊 <strong>Train:</strong> <span th:text="${trainSize}"></span> documents</p>
+            <p>📊 <strong>Test:</strong> <span th:text="${testSize}"></span> documents</p>
+        </div>
+    </div>
+
+    <div th:if="${trained}" class="card">
+        <h2>🔍 Classifier un Document</h2>
+        <p>Uploadez un fichier .txt ou saisissez du texte arabe</p>
+
+        <a th:href="@{/upload}" class="btn btn-success btn-large">
+            📄 Aller à la Classification →
+        </a>
+    </div>
+
+    <footer>
+        <p>© 2025 Classification de Textes Arabes | Naive Bayes + SAFAR</p>
+    </footer>
+</div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

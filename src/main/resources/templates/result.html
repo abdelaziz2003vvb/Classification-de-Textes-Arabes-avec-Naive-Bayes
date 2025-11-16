@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultat de Classification</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>✅ Résultat de Classification</h1>
+        <a th:href="@{/upload}" class="back-link">← Classifier un autre document</a>
+    </header>
+
+    <div class="card result-card">
+        <h2>🎯 Catégorie Prédite</h2>
+        <div class="predicted-category">
+            <span class="category-badge" th:text="${predictedCategory}"></span>
+            <span class="confidence-badge" th:text="${confidence}"></span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📊 Probabilités par Catégorie</h2>
+        <div class="probabilities">
+            <div th:each="entry : ${probabilities}" class="probability-item">
+                <span class="prob-label" th:text="${entry.key}"></span>
+                <div class="prob-bar-container">
+                    <div class="prob-bar"
+                         th:style="'width: ' + ${entry.value * 100} + '%'"
+                         th:classappend="${entry.key == predictedCategory} ? 'prob-bar-primary' : 'prob-bar-secondary'">
+                    </div>
+                    <span class="prob-value" th:text="${#numbers.formatPercent(entry.value, 1, 2)}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📈 Statistiques du Document</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-label">Tokens totaux:</span>
+                <span class="stat-value" th:text="${totalTokens}"></span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Tokens uniques:</span>
+                <span class="stat-value" th:text="${uniqueTokens}"></span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Fichier:</span>
+                <span class="stat-value" th:text="${fileName}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📄 Contenu du Document</h2>
+        <div class="document-content" dir="rtl">
+            <pre th:text="${content}"></pre>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <a th:href="@{/upload}" class="btn btn-primary">
+            📄 Classifier un autre document
+        </a>
+        <a th:href="@{/}" class="btn btn-secondary">
+            🏠 Retour à l'accueil
+        </a>
+    </div>
+
+    <footer>
+        <p>© 2025 Classification de Textes Arabes</p>
+    </footer>
+</div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>
